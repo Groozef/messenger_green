@@ -1,0 +1,155 @@
+.container {
+    position: relative; 
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #17212b; 
+    border-right: 1px solid #101921;
+    color: #ffffff;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.header {
+    padding: 14px 14px 10px 14px;
+    flex-shrink: 0;
+}
+
+.searchBar {
+    width: 100%;
+    padding: 8px 14px;
+    background-color: #24303f;
+    border: 1px solid transparent;
+    border-radius: 50px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+
+.list::-webkit-scrollbar {
+    width: 5px; 
+}
+
+.list::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.15); 
+    border-radius: 10px;
+}
+
+/* Бегунок при наведении на него */
+.list::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.list::-webkit-scrollbar-track,
+.list::-webkit-scrollbar-button {
+    display: none;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    padding: 9px 14px;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.item:hover {
+    background-color: #202b36;
+}
+
+.avatarWrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #2b5278;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.badge {
+    position: absolute;
+    bottom: -1px;
+    right: -3px;
+    background-color: #467fa9; 
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 20px;
+    min-width: 18px;
+    text-align: center;
+    border: 2px solid #17212b;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.infoTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+}
+
+.name {
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.time {
+    font-size: 12px;
+    color: #708499;
+    flex-shrink: 0;
+}
+
+.messagePreview {
+    margin: 0;
+    font-size: 13px;
+    color: #708499;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.resizer {
+    position: absolute;
+    top: 0;
+    right: -2px; 
+    width: 5px;   
+    height: 100%;
+    cursor: col-resize;
+    z-index: 99;
+    transition: background-color 0.2s ease;
+}
+
+.resizer:hover {
+    background-color: rgba(82, 136, 193, 0.4);
+}
