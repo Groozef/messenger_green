@@ -1,75 +1,142 @@
-# React + TypeScript + Vite
+# Telegram Web на GREEN-API
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-клиент для отправки и получения текстовых сообщений в Telegram через [GREEN-API](https://green-api.com/telegram). Пользователь входит с данными своего инстанса, создаёт чат по номеру телефона, пишет сообщение и видит ответ собеседника.
 
-Currently, two official plugins are available:
+## Возможности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Вход по `idInstance` и `apiTokenInstance` из личного кабинета GREEN-API
+- Создание чата по номеру телефона получателя
+- Отправка текстовых сообщений методом [SendMessage](https://green-api.com/telegram/docs/api/sending/SendMessage/)
+- Получение сообщений через [HTTP API](https://green-api.com/telegram/docs/api/receiving/technology-http-api/): [ReceiveNotification](https://green-api.com/telegram/docs/api/receiving/technology-http-api/ReceiveNotification/) + [DeleteNotification](https://green-api.com/telegram/docs/api/receiving/technology-http-api/DeleteNotification/)
+- Статусы сообщений: отправляется, отправлено, доставлено, прочитано, ошибка
+- Реакции и отредактированные сообщения
+- Удаление сообщений (у себя или у всех) и чатов по правому клику
+- Счётчик непрочитанных, поиск по чатам, эмодзи
+- Чаты и сессия сохраняются в браузере, после перезагрузки страницы входить заново не нужно
 
-## React Compiler
+## Стек
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+React 19, TypeScript, Vite, CSS Modules. Без стейт-менеджеров и UI-библиотек, из сторонних пакетов только `emoji-picker-react`.
 
-## Expanding the ESLint configuration
+## Запуск
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1. Что нужно установить
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- [Node.js](https://nodejs.org/) версии 20 или новее
+- [pnpm](https://pnpm.io/installation) (или npm, он идёт вместе с Node.js)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Проверить, что всё установлено:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+node -v
+pnpm -v
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Скачать и запустить проект
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+git clone https://github.com/Groozef/messenger_green.git
+cd messenger_green
+pnpm install
+pnpm dev
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Если используете npm, замените `pnpm install` на `npm install`, а `pnpm dev` на `npm run dev`.
+
+После запуска откройте в браузере http://localhost:5173.
+
+### 3. Подготовить инстанс GREEN-API
+
+Без этого шага войти не получится.
+
+1. Зарегистрируйтесь в [личном кабинете GREEN-API](https://console.green-api.com/) и создайте инстанс **Telegram**.
+2. **Авторизуйте инстанс.** На странице инстанса откройте вкладку «Связать по QR-коду» и отсканируйте код в Telegram на телефоне: *Настройки → Устройства → Подключить устройство*. Статус инстанса должен смениться на «Авторизован».
+3. **Включите уведомления.** На странице инстанса нажмите «Изменить» и:
+   - оставьте **пустым** поле «Адрес отправки уведомлений (URL)», иначе HTTP API не будет отдавать уведомления;
+   - включите «Получать уведомления о входящих сообщениях и файлах»;
+   - включите «Получать уведомления о статусах отправленных сообщений»;
+   - включите «Получать уведомления о сообщениях, отправленных с API»;
+   - по желанию включите уведомления о сообщениях, отправленных с телефона, об удалённых и отредактированных сообщениях.
+
+   Сохраните. Настройки применяются в течение пары минут.
+4. Скопируйте со страницы инстанса `idInstance`, `apiTokenInstance` и `apiUrl`.
+
+### 4. Войти и проверить
+
+1. На странице входа введите `idInstance` и `apiTokenInstance`. Поле `apiUrl` можно оставить пустым: оно вычисляется из `idInstance` (например, `https://4100.api.green-api.com`).
+2. Нажмите **«+»** слева вверху и введите номер получателя в международном формате, например `77001234567`.
+3. Напишите сообщение и отправьте.
+4. Ответьте на него из Telegram на телефоне получателя: ответ появится в чате через пару секунд.
+
+> Telegram позволяет отправить сообщение по номеру, только если получатель разрешил находить себя по номеру. Если в его настройках приватности стоит «Мои контакты», а вас нет в его контактах, сообщение не дойдёт: рядом с ним будет красный «!». Для проверки удобнее писать на свой второй аккаунт.
+
+### Заполнить форму входа заранее (необязательно)
+
+Чтобы не вводить данные каждый раз при разработке, создайте в корне проекта файл `.env` по примеру `.env.example`:
 
 ```
+VITE_GREEN_API_URL=https://4100.api.green-api.com
+VITE_GREEN_API_ID_INSTANCE=4100000000
+VITE_GREEN_API_TOKEN=ваш_apiTokenInstance
+```
+
+После изменения `.env` перезапустите `pnpm dev`.
+
+### Сборка для продакшена
+
+```bash
+pnpm build
+pnpm preview
+```
+
+Готовые файлы появятся в папке `dist/`. Это статика, её можно разместить на любом хостинге (Vercel, Netlify, GitHub Pages). Сервер не нужен: GREEN-API разрешает запросы прямо из браузера.
+
+## Частые проблемы
+
+| Сообщение на экране | Что сделать |
+|---|---|
+| «Неверный idInstance или apiTokenInstance» | Проверьте данные в кабинете. Обратите внимание, что idInstance скопирован целиком |
+| «Инстанс не авторизован (статус: notAuthorized)» | Отсканируйте QR-код на странице инстанса (шаг 3.2) |
+| «Не удалось подключиться» | Проверьте `apiUrl`: это должен быть адрес вида `https://XXXX.api.green-api.com`, а не `https://green-api.com` |
+| Сообщения отправляются, но ответы не приходят | Включите уведомления о входящих сообщениях и проверьте, что поле URL уведомлений пустое (шаг 3.3) |
+| «Нет соединения с GREEN-API» в списке чатов | Нет интернета или в настройках инстанса заполнен URL уведомлений. Приложение само переподключится через 5 секунд |
+
+## Как это работает
+
+- **Отправка.** Сообщение сразу появляется в чате со значком 🕓, затем уходит запросом `sendMessage`. После ответа сервера статус меняется на ✓, а дальше по уведомлениям на ✓✓ и «прочитано».
+- **Получение.** Приложение держит открытый запрос `receiveNotification` (long polling, до 20 секунд). Когда приходит уведомление, оно обрабатывается и удаляется из очереди через `deleteNotification`, затем цикл повторяется. При выходе из аккаунта опрос останавливается.
+- **Сопоставление чатов.** Telegram присылает ответы с внутренним ID пользователя, а не с номером телефона. Чтобы ответ попал в чат, созданный по номеру, приложение узнаёт этот ID из уведомлений о собственных отправленных сообщениях и запоминает его за чатом.
+
+## Структура проекта
+
+```
+src/
+  components/
+    LoginForm/        форма входа
+    Messenger/        основной экран: связывает список чатов и окно переписки
+    ChatsList/        боковая панель с чатами и поиском
+    ChatWindow/       переписка и поле ввода
+    AddContactModal/  создание нового чата
+    ContextMenu/      меню по правому клику
+    MessageStatus/    значки статуса сообщения
+  hooks/
+    useChats.ts           состояние чатов, отправка и удаление
+    chatsReducer.ts       вся логика изменения чатов
+    useNotifications.ts   получение уведомлений (long polling)
+    useResizable.ts       изменение ширины боковой панели
+    useClickOutside.ts    закрытие по клику мимо элемента
+  services/
+    greenApi.ts       запросы к GREEN-API
+    storage.ts        сохранение в localStorage
+  utils/format.ts     форматирование дат, телефонов, инициалов
+  types/index.ts      типы данных
+```
+
+## Команды
+
+| Команда | Что делает |
+|---|---|
+| `pnpm dev` | запуск в режиме разработки |
+| `pnpm build` | проверка типов и сборка |
+| `pnpm preview` | просмотр собранной версии |
+| `pnpm lint` | проверка кода ESLint |

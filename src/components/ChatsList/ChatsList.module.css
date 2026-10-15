@@ -1,22 +1,26 @@
 .container {
-    position: relative; 
+    position: relative;
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
     height: 100vh;
-    background-color: #17212b; 
+    background-color: #17212b;
     border-right: 1px solid #101921;
     color: #ffffff;
-    box-sizing: border-box;
     overflow: hidden;
 }
 
 .header {
-    padding: 14px 14px 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
     flex-shrink: 0;
 }
 
 .searchBar {
-    width: 100%;
+    flex-grow: 1;
+    min-width: 0;
     padding: 8px 14px;
     background-color: #24303f;
     border: 1px solid transparent;
@@ -24,30 +28,61 @@
     color: #fff;
     font-size: 14px;
     outline: none;
-    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.searchBar:focus {
+    border-color: #5288c1;
+}
+
+.iconBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background-color: transparent;
+    border: none;
+    border-radius: 50%;
+    color: #708499;
+    font-size: 22px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.iconBtn:hover {
+    background-color: #24303f;
+    color: #fff;
+}
+
+.connectionError {
+    padding: 6px 14px;
+    background-color: #3a2a2e;
+    color: #e5737a;
+    font-size: 12px;
+    text-align: center;
 }
 
 .list {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     margin: 0;
     padding: 4px 0;
     list-style: none;
     overflow-y: auto;
-    flex-grow: 1;
 }
 
-
 .list::-webkit-scrollbar {
-    width: 5px; 
+    width: 5px;
 }
 
 .list::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.15); 
+    background-color: rgba(255, 255, 255, 0.15);
     border-radius: 10px;
 }
 
-/* Бегунок при наведении на него */
 .list::-webkit-scrollbar-thumb:hover {
     background-color: rgba(255, 255, 255, 0.3);
 }
@@ -57,11 +92,18 @@
     display: none;
 }
 
+.placeholder {
+    padding: 24px 20px;
+    color: #708499;
+    font-size: 13px;
+    text-align: center;
+}
+
 .item {
     display: flex;
     align-items: center;
-    padding: 9px 14px;
     gap: 12px;
+    padding: 9px 14px;
     cursor: pointer;
     user-select: none;
 }
@@ -70,36 +112,26 @@
     background-color: #202b36;
 }
 
-.avatarWrapper {
-    position: relative;
-    flex-shrink: 0;
+.activeItem,
+.activeItem:hover {
+    background-color: #2b5278;
 }
 
 .avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: #2b5278;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #5288c1, #2b5278);
     font-weight: bold;
     font-size: 16px;
 }
 
-.badge {
-    position: absolute;
-    bottom: -1px;
-    right: -3px;
-    background-color: #467fa9; 
-    color: white;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 20px;
-    min-width: 18px;
-    text-align: center;
-    border: 2px solid #17212b;
+.activeItem .avatar {
+    background: #5288c1;
 }
 
 .info {
@@ -109,10 +141,15 @@
     min-width: 0;
 }
 
-.infoTop {
+.infoTop,
+.infoBottom {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
+}
+
+.infoTop {
     margin-bottom: 3px;
 }
 
@@ -124,10 +161,17 @@
     text-overflow: ellipsis;
 }
 
+.meta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
 .time {
+    flex-shrink: 0;
     font-size: 12px;
     color: #708499;
-    flex-shrink: 0;
 }
 
 .messagePreview {
@@ -139,11 +183,28 @@
     text-overflow: ellipsis;
 }
 
+.activeItem .time,
+.activeItem .messagePreview {
+    color: #c8d9eb;
+}
+
+.badge {
+    flex-shrink: 0;
+    min-width: 20px;
+    padding: 2px 6px;
+    background-color: #467fa9;
+    border-radius: 20px;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+}
+
 .resizer {
     position: absolute;
     top: 0;
-    right: -2px; 
-    width: 5px;   
+    right: -2px;
+    width: 5px;
     height: 100%;
     cursor: col-resize;
     z-index: 99;
